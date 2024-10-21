@@ -7,6 +7,7 @@ using namespace std;
 const int N = 5;
 
 
+double x_vector [N] = {1.0,1.0,1.0,1.0,1.0};
 
 
 void print_Matrix(double ** matrix)
@@ -14,9 +15,16 @@ void print_Matrix(double ** matrix)
   cout << "\n";
   for (int i=0; i<N; i++)
     {
-      for (int j=0; j<N;j++)
+      for (int j=0; j<N+1;j++)
 	{
-	  cout << matrix[i][j] << " " ;
+	  if (j==N)
+	    {
+	      cout << x_vector[i] << " " ;
+	    }
+	  else
+	    {
+	     cout << matrix[i][j] << " " ;
+	    }
 	}
       cout << endl;
     }
@@ -32,27 +40,38 @@ double** getRandom_Array()
       for (int j=0; j<N;j++)
 	{
 	  arr[i][j] = fmod(rand(),10)-5.0;
-	  cout << arr[i][j] << " " ;
 	}
-      cout << endl;
     }
   return arr;
 }
 
 double** add_Row(double ** matrix, int row1, int row2, double scalar)
 {
-
-  for(int j=0; j<N;j++)
+  if (row2 >= N)
     {
-      matrix[row2][j] = matrix[row1][j]*scalar +  matrix[row2][j];
+      scalar = matrix[row1][row1];
+      for(int j=0; j<N;j++)
+	{
+	  if (j==0) x_vector[row1] = x_vector[row1]/scalar;
+	  matrix[row1][j] = matrix[row1][j]/scalar;
+	}
     }
-  
+  else
+    {
+      for(int j=0; j<N;j++)
+	{
+	  
+	  if (j==0) x_vector[row2] = x_vector[row1]*scalar + x_vector[row2]; 
+	  matrix[row2][j] = matrix[row1][j]*scalar +  matrix[row2][j];
+	}
+    }
   return matrix;
 }
 
 double** getGauss_Elim(double** matrix)
 {
   double scalar;
+  print_Matrix(matrix);
   for(int j=0; j<N; j++)
     {
       for(int i=0; i<N; i++)
@@ -63,13 +82,17 @@ double** getGauss_Elim(double** matrix)
 	    }
 	  else if (i != j)
 	    {
-	      scalar = matrix[i][j]/matrix[j][j]*-1;
+	      scalar = matrix[i][j]/matrix[j][j]*-1; 
 
 	      matrix = add_Row(matrix,j,i,scalar);
+
+	      print_Matrix(matrix);
 	    }
 	  else
 	    {
-	      continue;
+	      matrix = add_Row(matrix,j,N,1.0);
+
+	      print_Matrix(matrix);
 	    }
 
 	}
